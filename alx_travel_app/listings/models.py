@@ -1,4 +1,6 @@
+import uuid
 from django.db import models
+from .models import Booking # Ensure this import works if in same file, otherwise just use 'Booking'
 
 class Listing(models.Model):
     title = models.CharField(max_length=200)
@@ -30,3 +32,26 @@ class Review(models.Model):
 
     def __str__(self):
         return f"{self.reviewer_name} ({self.rating}) - {self.listing.title}"
+
+class Payment(models.Model):
+    booking = models.ForeignKey(
+        Booking, 
+        related_name='payments', 
+        on_delete=models.CASCADE
+    )
+    transaction_id = models.CharField(
+        max_length=100, 
+        unique=True,
+        help_text="Unique transaction reference (tx_ref) for Chapa"
+    )
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=3, default="ETB")
+    status = models.CharField(
+        max_length=20, 
+        default='Pending',
+        help_text="Payment status: Pending, Completed, or Failed"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Payment {self.transaction_id} - {self.status}"
