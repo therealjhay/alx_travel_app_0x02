@@ -1,6 +1,5 @@
 import uuid
 from django.db import models
-from .models import Booking # Ensure this import works if in same file, otherwise just use 'Booking'
 
 class Listing(models.Model):
     title = models.CharField(max_length=200)
